@@ -1,27 +1,26 @@
 # Microsoft-Sentinel-Honeypot
 
 ## Objective
-[Brief Objective - Remove this afterwards]
+This guided lab is aimed to analyze real-world attack data by establishing a basic home SOC in the cloud using Azure, creating a honeypot virtual machine (VM) and allowing attackers to try and access the VM. The primary focus was to ingest and analyze logs within a Security Information and Event Management (SIEM) system, generating test telemetry and creating a report that visualizes the data. This hands-on experience was designed to deepen understanding of log analysis, threat detection, and SOC operations in a real-world cloud environment.
 
-This lab is aimed to analyze real-world attack data by establishing a basic home SOC in the cloud using Azure, creating a honeypot virtual machine (VM) and allowing attackers to try and access it. The primary focus was to ingest and analyze logs within a Security Information and Event Management (SIEM) system, generating test telemetry to mimic real-world attack scenarios. This hands-on experience was designed to deepen understanding of network security, attack patterns, and defensive strategies.
+Credit for this guided lab goes to [Josh Madakor on Youtube](https://www.youtube.com/@JoshMadakor). 
 
 ### Skills Learned
-[Bullet Points - Remove this afterwards]
-
-- Advanced understanding of SIEM concepts and practical application.
-- Proficiency in analyzing and interpreting network logs.
-- Ability to generate and recognize attack signatures and patterns.
-- Enhanced knowledge of network protocols and security vulnerabilities.
-- Development of critical thinking and problem-solving skills in cybersecurity.
+- Creating an Azure subscription and setting up a VM within
+- Configuring Log Analytics Workspace
+- Forwarding logs and integrating with Sentinel
+- Querying failed login attempts and visualizing attack sources
+- Building an attack map to track real-time hacker activity
 
 ### Tools Used
-[Bullet Points - Remove this afterwards]
+- Azure & Sentinel (SIEM) for log ingestion & analysis, and report generation
+- Windows Event Viewer to analyze security events
+- PowerShell (PS) to programatically retrieve data
 
-- Security Information and Event Management (SIEM) system for log ingestion and analysis.
-- Network analysis tools (such as Wireshark) for capturing and examining network traffic.
-- Telemetry generation tools to create realistic network traffic and attack scenarios.
+### Insights
+This guided lab is a great example of why it is so important to understand a multitude of tools and how they intersect in order to achieve a certain result. During my self-study on HackTheBox, they use Splunk as the primary SIEM so the introduction to Microsoft's SIEM in this lab was interesting but also overwhelming. With little knowledge in PS, retrieving the specific data for the report would not have been possible without the provided script. 
 
-## Steps
+### Steps
 
 Create Azure account and set up the virtual machine as it can take a while to process. The point of this lab is to make the VM very discoverable and ensure it does not drop any traffic. Therefore, remove default firewall rules and create a new inbound rule that will allow all traffic from the internet into the VM. 
 <p align="center">
@@ -84,3 +83,104 @@ Disabling firewall in VM: <br/>
 Ping is now working as echo requestes are allowed: <br/>
 <img src="https://i.imgur.com/oVSTvzu.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
 <br /> 
+
+Download a PS script provided for this lab. 
+<p align="center">
+Copy & pasting the script into PS ISE: <br/>
+<img src="https://i.imgur.com/E64Z3YA.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+<br />
+Saving it as Log_Exporter in the Desktop: <br/>
+<img src="https://i.imgur.com/3X7vk93.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+
+Get IP API key so we can convert IP addresses to logitude & latitude or country. 
+<p align="center">
+Retrieving IP API key: <br/>
+<img src="https://i.imgur.com/7Pt60Dn.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+Copy & paste the API key into the script: <br/>
+<img src="https://i.imgur.com/AAPaODX.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+<br />
+Run the script in PS. 3 entries because there are only 3 failed logon's in event viewer: <br/>
+<img src="https://i.imgur.com/ZFP9jp9.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+Event viewer (Event ID 4625): <br/>
+<img src="https://i.imgur.com/A1jZI86.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+
+Information from the failed logon is sent to the IP API. Geodata is then daeposited into the failed_rdp log file.
+<p align="center">
+failed_rdp log file: <br/>
+<img src="https://i.imgur.com/mzafjrf.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+
+In the log file: "samplehost" are the sample data used to train the analytics workspace, failed logons are labeled as "honeypot-vm" 
+<p align="center">
+Log file data: <br/>
+<img src="https://i.imgur.com/LHtRIiB.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+
+Create a custom log inside the log analytics workspace allowing us to bring the custom geodata log. LAW-honeypot > Tables (under settings) > Create > New custom log (MMA-based). Remember the file is on the VM, not the host device. Copy all logs in the VM and paste in new file on the host computer. 
+<p align="center">
+Creating a custom log in log analytics workspace: <br/>
+<img src="https://i.imgur.com/nKhJJvR.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+Using the selected log to train log analytics on what to look for: <br/>
+<img src="https://i.imgur.com/zgr5Lel.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+Collect path is where the log lives on the VM: <br/>
+<img src="https://i.imgur.com/pc6Rqg0.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+Naming the custom log: <br/>
+<img src="https://i.imgur.com/OTzyFTn.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+Review + Create: <br/>
+<img src="https://i.imgur.com/IlF6Rrw.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+
+After 5-10 minutes, check by querying the custom log. 
+<p align="center">
+Query results: <br/>
+<img src="https://i.imgur.com/DzdrwMO.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+Extra details of an event. Focus on RawData: <br/>
+<img src="https://i.imgur.com/1rfEoov.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+  
+We need to take RawData and extract certain fields/information from it. 
+
+Create a new workbook in Sentinel for an interactive report. <br />
+Workbooks > Add Workbook > Edit > Delete current default workbooks > Add Query > copy & paste the query in (extract field no longer available in LAW) <br />
+<p align="center">
+Workbooks path: <br/>
+<img src="https://i.imgur.com/K22nz9v.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+Copy & pasting the query script: <br/>
+<img src="https://i.imgur.com/MjGlYnz.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+
+Run the Query > Visualization = Map > Set map settings as Metric Label = label, Metric value = event_count > Save workbook > set map to automatically refresh every 10 minutes 
+<p align="center">
+Run Query configurations: <br/>
+<img src="https://i.imgur.com/a4Y3AuV.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+Saving the workbook: <br/>
+<img src="https://i.imgur.com/bB6Usd9.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+
+We now have a map visualizing where the attackers are from! 
+<p align="center">
+Initial map. Majority of IP addresses are originating from Paraguay: <br/>
+<img src="https://i.imgur.com/QjyJkLe.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+Adjusting map refresh timer: <br/>
+<img src="https://i.imgur.com/FdIOUVX.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+After a few refreshes: <br/>
+<img src="https://i.imgur.com/Jon3sH5.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
+Rate limited by the API: <br/>
+<img src="https://i.imgur.com/2mfoWdf.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
+<br />
