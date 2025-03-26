@@ -10,11 +10,11 @@ Credit for this guided lab goes to [Josh Madakor on Youtube](https://www.youtube
 - Configuring Log Analytics Workspace
 - Forwarding logs and integrating with Sentinel
 - Querying failed login attempts and visualizing attack sources
-- Building an attack map to track real-time hacker activity
+- Building an attack map to track real-time attacker activity
 
 ### Tools Used
 - Azure & Sentinel (SIEM) for log ingestion & analysis, and report generation
-- Windows Event Viewer to analyze security events
+- Windows Event Viewer to analyze security events & details
 - PowerShell (PS) to programatically retrieve data
 
 ### Takeaways
