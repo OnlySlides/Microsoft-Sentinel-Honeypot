@@ -182,4 +182,4 @@ Rate limited by the API: <br/>
 <img src="https://i.imgur.com/2mfoWdf.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
 <br />
 
-## Completed Timestamp: October 28, 2023
+## Lab Completion Timestamp: October 28, 2023
