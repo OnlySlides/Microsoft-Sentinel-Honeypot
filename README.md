@@ -17,7 +17,7 @@ Credit for this guided lab goes to [Josh Madakor on Youtube](https://www.youtube
 - Windows Event Viewer to analyze security events
 - PowerShell (PS) to programatically retrieve data
 
-### Insights
+### Takeaways
 This guided lab is a great example of why it is so important to understand a multitude of tools and how they intersect in order to achieve a certain result. During my self-study on HackTheBox, they use Splunk as the primary SIEM so the introduction to Microsoft's SIEM in this lab was interesting but also overwhelming. With little knowledge in PS, retrieving the specific data for the report would not have been possible without the provided script. 
 
 ### Steps
@@ -65,13 +65,14 @@ Event details: <br/>
 <img src="https://i.imgur.com/JDDJzx6.png" height="20%" width="40%" alt="Azure Honeypot Steps"/>
 <br />
 
-Note that details does not show which country the IP is originating from. We will create a custom log using PS to programtically retrieve the IP addresses and using an IP geolocation API to generate more information. The custom log will be sent to the log analytics workspace in Azure, then use Sentinel (SIEM) to plot out the different attacker on the map. 
+*The details does not show which country the IP is originating from.* We will create a custom log using PS to programtically retrieve the IP addresses and using an IP geolocation API to generate more information. The custom log will be sent to the log analytics workspace in Azure, then use Sentinel (SIEM) to plot out the different attacker on the map.
 
 Windows firewall on the VM need to be turned off so it can respond to ICMP echo requests. This results in people discovering the VM faster on the internet. 
 <p align="center">
 -t for perpetual ping in command prompt (CMD): <br/>
 <img src="https://i.imgur.com/cHfkzm9.png" height="50%" width="50%" alt="Azure Honeypot Steps"/>
-<br />
+<br /> 
+
 Request is timing out so we navigate into VM Windows firewall and disable Domain & Public profile. This is a honeypot so disabling is fine.
 <p align="center">
 Disabling firewall in VM: <br/>
