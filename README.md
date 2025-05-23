@@ -3,7 +3,7 @@
 ## Objective
 This guided lab is aimed to analyze real-world attack data by establishing a basic home SOC in the cloud using Azure, creating a honeypot virtual machine (VM) and allowing attackers to try and access the VM. The primary focus was to ingest and analyze logs within a Security Information and Event Management (SIEM) system, generating test telemetry and creating a report that visualizes the data. This hands-on experience was designed to deepen understanding of log analysis, threat detection, and SOC operations in a real-world cloud environment.
 
-Credit for this guided lab goes to [Josh Madakor on Youtube](https://www.youtube.com/@JoshMadakor). 
+Credit for this guided lab goes to [Josh Madakor on YouTube](https://www.youtube.com/@JoshMadakor). 
 
 ### Skills Learned
 - Creating an Azure subscription and setting up a VM within
